@@ -6,11 +6,22 @@ pipeline {
 	 
     stages {
     
-        stage('Compile Stage') {
+        stage('build && SonarQube analysis') {
+        	steps {
+                withSonarQubeEnv('sonarserver') {
+                
+                    withMaven(maven : 'Maven 3.5.3') {
+                        bat 'mvn clean package sonar:sonar'
+                    }
+                }
+            }
+        }
+        
+        stage("Quality Gate") {
             steps {
-            		withMaven(maven : 'Maven 3.5.3'){
-            			bat'mvn clean compile'
-            		}                            
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
         
@@ -21,15 +32,7 @@ pipeline {
             		}              			
             }
         }
-        
-        stage('Deployment stage') {
-            steps {
-					withMaven(maven : 'Maven 3.5.3'){
-            			bat'mvn deploy'
-            		}   			
 
-            }
-        }
     }
     
 }

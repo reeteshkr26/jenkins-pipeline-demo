@@ -54,32 +54,46 @@
     		<version>1.4.10</version>
 		</dependency>
 	</dependencies>
+	
+	
 
 	<build>
 		<plugins>
+		
 			<plugin>
 				 <groupId>com.spotify</groupId>
    				 <artifactId>dockerfile-maven-plugin</artifactId>
    				 <version>1.4.10</version>
-				<executions>
-					<execution>
-						<id>default</id>
-						<phase>install</phase>
-						<goals>
-							<goal>build</goal>
-						</goals>
-					</execution>
-				</executions>
-				
-				<configuration>
+   				 <dependencies>
+                    <dependency>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>docker-client</artifactId>
+                        <version>8.8.4</version>
+                        <classifier>shaded</classifier>
+                    </dependency>
+                </dependencies>
+   				<configuration>
 					<repository>reeteshkr2604/jenkins-pipeline-demo</repository>
 					<tag>${project.version}</tag>
+					<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 					<pullNewerImage>false</pullNewerImage>
 					<buildArgs>
 						<jar_file>target/${project.build.finalName}.jar</jar_file>
 					</buildArgs>
 			
 				</configuration>
+				<executions>
+					<execution>
+						<id>default</id>
+						<phase>install</phase>
+						<goals>
+							<goal>build</goal>
+							<!-- <goal>push</goal>-->
+						</goals>
+					</execution>
+				</executions>
+				
+		
 			
 			</plugin>
 			<plugin>
